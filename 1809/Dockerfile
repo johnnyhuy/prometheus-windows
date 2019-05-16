@@ -16,27 +16,22 @@ ENV PROMETHEUS_VERSION 2.9.2
 
 RUN Invoke-WebRequest $('https://github.com/prometheus/prometheus/releases/download/v{0}/prometheus-{0}.windows-amd64.tar.gz' -f $env:PROMETHEUS_VERSION) -OutFile 'prometheus.tar.gz' -UseBasicParsing
 RUN .\archiver.exe open prometheus.tar.gz
-RUN Rename-Item -Path $('C:/prometheus-{0}.windows-amd64' -f $env:PROMETHEUS_VERSION) -NewName 'C:/download'
+RUN Rename-Item -Path $('C:/prometheus-{0}.windows-amd64' -f $env:PROMETHEUS_VERSION) -NewName 'C:/prometheus'
 
 FROM mcr.microsoft.com/windows/nanoserver:$tag
 
 COPY --from=servercore /windows/system32/netapi32.dll /windows/system32/netapi32.dll
-COPY --from=servercore /download/prometheus.exe      /bin/prometheus.exe
-COPY --from=servercore /download/promtool.exe        /bin/promtool.exe
-COPY --from=servercore /download/prometheus.yml      /etc/prometheus/prometheus.yml
-COPY --from=servercore /download/console_libraries/  /etc/prometheus/
-COPY --from=servercore /download/consoles/           /etc/prometheus/
-
-RUN mkdir prometheus
+COPY --from=servercore /prometheus/      /prometheus/
 
 EXPOSE 9090
 
-WORKDIR /bin
+WORKDIR /prometheus
+RUN mkdir storage
 
 CMD [ `
     "prometheus.exe", `
-    "--config.file=/etc/prometheus/prometheus.yml", `
-    "--storage.tsdb.path=/prometheus", `
-    "--web.console.libraries=/etc/prometheus/console_libraries", `
-    "--web.console.templates=/etc/prometheus/consoles" `
+    "--config.file=/prometheus/prometheus.yml", `
+    "--storage.tsdb.path=/prometheus/storage", `
+    "--web.console.libraries=/prometheus/console_libraries", `
+    "--web.console.templates=/prometheus/consoles" `
 ]
