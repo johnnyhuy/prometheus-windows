@@ -25,6 +25,10 @@ docker run --rm -p 9090:9090 johnnyhuy/prometheus-windows:win2016
 
 - Docker & Windows (duhh!)
 
+## Known issues
+
+- Nanoserver SAC 2016 seems to be missing so the win2016 image cannot be updated.
+
 ## Contribution
 
 - Project derived from [StefanScherer/dockerfiles-windows](https://github.com/dockersamples/aspnet-monitoring)
