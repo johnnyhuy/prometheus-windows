@@ -23,7 +23,7 @@ RUN Rename-Item -Path $('C:/prometheus-{0}.windows-amd64' -f $env:PROMETHEUS_VER
 FROM mcr.microsoft.com/windows/nanoserver:$tag
 
 COPY --from=servercore /windows/system32/netapi32.dll /windows/system32/netapi32.dll
-COPY --from=servercore /prometheus/      /prometheus/
+COPY --from=servercore /prometheus/                   /prometheus/
 
 EXPOSE 9090
 
