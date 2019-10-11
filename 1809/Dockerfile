@@ -12,9 +12,12 @@ ENV MHOLT_ARCHIVER_SHA256 c23eab86a8f77e446f2b5dbb03305ac9acfb5187108a0090a4bcb3
 RUN Invoke-WebRequest $('https://github.com/mholt/archiver/releases/download/v{0}/archiver_windows_amd64.exe' -f $env:MHOLT_ARCHIVER_VERSION) -OutFile archiver.exe -UseBasicParsing ; `
     if ((Get-FileHash archiver.exe -Algorithm sha256).Hash -ne $env:MHOLT_ARCHIVER_SHA256) { Write-Error 'SHA256 mismatch' }
 
-ENV PROMETHEUS_VERSION 2.9.2
+ENV PROMETHEUS_VERSION 2.13.0
+ENV PROMETHEUS_SHA256 b30c379c06fc5ff127f0fc2c85010d71a878f207372dbdfe5d6c7af1a38c043f
 
-RUN Invoke-WebRequest $('https://github.com/prometheus/prometheus/releases/download/v{0}/prometheus-{0}.windows-amd64.tar.gz' -f $env:PROMETHEUS_VERSION) -OutFile 'prometheus.tar.gz' -UseBasicParsing
+RUN Invoke-WebRequest $('https://github.com/prometheus/prometheus/releases/download/v{0}/prometheus-{0}.windows-amd64.tar.gz' -f $env:PROMETHEUS_VERSION) -OutFile 'prometheus.tar.gz' -UseBasicParsing ; `
+    if ((Get-FileHash prometheus.tar.gz -Algorithm sha256).Hash -ne $env:PROMETHEUS_SHA256) { Write-Error 'SHA256 mismatch' }
+    
 RUN .\archiver.exe open prometheus.tar.gz
 RUN Rename-Item -Path $('C:/prometheus-{0}.windows-amd64' -f $env:PROMETHEUS_VERSION) -NewName 'C:/prometheus'
 
